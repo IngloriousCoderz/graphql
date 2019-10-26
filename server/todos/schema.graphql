@@ -1,0 +1,26 @@
+type Query {
+  todos: [Todo!]!
+}
+
+type Mutation {
+  create(text: String!): Todo!
+  update(id: Int!, changes: ChangesInput!): Todo!
+  remove(id: Int!): Boolean
+
+  createAndNotify(text: String!): Todo!
+}
+
+type Subscription {
+  newTodo: Todo
+}
+
+type Todo {
+  id: Int!
+  text: String!
+  done: Boolean
+}
+
+input ChangesInput {
+  text: String
+  done: Boolean
+}
