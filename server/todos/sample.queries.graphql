@@ -1,0 +1,43 @@
+query All {
+  todos(filter: { done: true }) {
+    id
+    text
+    done
+  }
+}
+
+mutation Create {
+  create(text: "Todo 4") {
+    id
+    text
+    done
+  }
+}
+
+mutation Update {
+  update(id: 2, changes: { done: true }) {
+    id
+    text
+    done
+  }
+}
+
+mutation Remove {
+  remove(id: 3)
+}
+
+subscription NewTodo {
+  newTodo {
+    id
+    text
+    done
+  }
+}
+
+mutation CreateAndNotify {
+  createAndNotify(text: "Brand new!") {
+    id
+    text
+    done
+  }
+}
