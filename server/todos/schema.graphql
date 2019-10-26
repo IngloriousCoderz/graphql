@@ -1,5 +1,5 @@
 type Query {
-  todos: [Todo!]!
+  todos(filter: FilterInput): [Todo!]!
 }
 
 type Mutation {
@@ -17,6 +17,10 @@ type Subscription {
 type Todo {
   id: Int!
   text: String!
+  done: Boolean
+}
+
+input FilterInput {
   done: Boolean
 }
 

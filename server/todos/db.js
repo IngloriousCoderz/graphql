@@ -3,11 +3,13 @@ module.exports = { all, get, create, update, remove }
 let todos = [
   { id: 1, text: 'Todo 1', done: true },
   { id: 2, text: 'Todo 2', done: false },
-  { id: 3, text: 'Todo 3' },
+  { id: 3, text: 'Todo 3', done: null },
 ]
 
-function all() {
-  return todos
+function all(filter = {}) {
+  return todos.filter(todo =>
+    typeof filter.done !== 'undefined' ? todo.done === filter.done : todo,
+  )
 }
 
 function get(id) {

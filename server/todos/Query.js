@@ -1,3 +1,3 @@
 module.exports = {
-  todos: (parent, args, { db }) => db.all(),
+  todos: (parent, args, { db }) => db.all(args.filter),
 }
