@@ -36,3 +36,23 @@ export const REMOVE = gql`
     remove(id: $id)
   }
 `
+
+export const CREATE_AND_NOTIFY = gql`
+  mutation CreateAndNotify($text: String!) {
+    createAndNotify(text: $text) {
+      id
+      text
+      done
+    }
+  }
+`
+
+export const NEW_TODO = gql`
+  subscription NewTodo {
+    newTodo {
+      id
+      text
+      done
+    }
+  }
+`

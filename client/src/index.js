@@ -1,4 +1,4 @@
-import * as api from './api/apollo/client'
+import * as api from './api/axios'
 
 const $form = document.querySelector('form')
 const $text = document.querySelector('input')
@@ -12,6 +12,8 @@ $list.addEventListener('click', handleClick)
 $filter.addEventListener('click', handleFilter)
 
 render()
+
+// api.observable.subscribe((data) => console.log(data) || render())
 
 async function render() {
   const todos = await api.all(filter)

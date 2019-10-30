@@ -1,3 +1,4 @@
+// @see https://www.apollographql.com/docs/react/get-started/
 import ApolloClient from 'apollo-boost'
 
 import { ALL, CREATE, UPDATE, REMOVE } from './queries'

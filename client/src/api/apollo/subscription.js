@@ -1,12 +1,32 @@
-// @see https://www.apollographql.com/docs/react/api/apollo-client/
+// @see https://www.apollographql.com/docs/react/data/subscriptions/
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
+
+import { getMainDefinition } from 'apollo-utilities'
+import { split } from 'apollo-link'
+import { WebSocketLink } from 'apollo-link-ws'
 import { HttpLink } from 'apollo-link-http'
 
-import { ALL, CREATE, UPDATE, REMOVE } from './queries'
+import { ALL, UPDATE, REMOVE, CREATE_AND_NOTIFY, NEW_TODO } from './queries'
 
 const cache = new InMemoryCache()
-const link = new HttpLink({ uri: 'http://localhost:4000/' })
+
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:4000/`,
+  options: { reconnect: true },
+})
+const httpLink = new HttpLink({ uri: 'http://localhost:4000/' })
+const link = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    )
+  },
+  wsLink,
+  httpLink,
+)
 const client = new ApolloClient({ cache, link, connectToDevTools: true })
 
 export async function all(filter) {
@@ -19,13 +39,8 @@ export async function all(filter) {
 
 export async function create(text) {
   const { data } = await client.mutate({
-    mutation: CREATE,
+    mutation: CREATE_AND_NOTIFY,
     variables: { text },
-    update: (cache, { data: { create } }) => {
-      const data = cache.readQuery({ query: ALL })
-      data.todos.push(create)
-      cache.writeQuery({ query: ALL, data })
-    },
   })
   return data.create
 }
@@ -50,3 +65,11 @@ export async function remove(id) {
     },
   })
 }
+
+const observable = client.subscribe({ query: NEW_TODO })
+
+observable.subscribe(({ data: newData }) => {
+  const data = client.readQuery({ query: ALL })
+  data.todos.push(newData.newTodo)
+  client.writeQuery({ query: ALL, data })
+})
