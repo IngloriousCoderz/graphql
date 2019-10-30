@@ -13,8 +13,6 @@ $filter.addEventListener('click', handleFilter)
 
 render()
 
-// api.observable.subscribe((data) => console.log(data) || render())
-
 async function render() {
   const todos = await api.all(filter)
   $list.innerHTML = todos
