@@ -1,4 +1,5 @@
 import { gql } from 'apollo-boost'
+// or import gql from 'graphql-tag'
 
 export const ALL = gql`
   query All($filter: FilterInput) {

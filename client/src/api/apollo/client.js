@@ -1,8 +1,13 @@
-import ApolloClient from 'apollo-boost'
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
+import 'apollo-link-error'
 
 import { ALL, CREATE, UPDATE, REMOVE } from './queries'
 
-const client = new ApolloClient({ uri: 'http://localhost:4000/' })
+const cache = new InMemoryCache()
+const link = new HttpLink({ uri: 'http://localhost:4000/' })
+const client = new ApolloClient({ cache, link, connectToDevTools: true })
 
 export async function all(filter) {
   const { data } = await client.query({
@@ -16,10 +21,10 @@ export async function create(text) {
   const { data } = await client.mutate({
     mutation: CREATE,
     variables: { text },
-    update: (proxy, { data: { create } }) => {
-      const data = proxy.readQuery({ query: ALL })
+    update: (cache, { data: { create } }) => {
+      const data = cache.readQuery({ query: ALL })
       data.todos.push(create)
-      proxy.writeQuery({ query: ALL, data })
+      cache.writeQuery({ query: ALL, data })
     },
   })
   return data.create
@@ -37,11 +42,11 @@ export async function remove(id) {
   await client.mutate({
     mutation: REMOVE,
     variables: { id },
-    update: proxy => {
-      const data = proxy.readQuery({ query: ALL })
+    update: cache => {
+      const data = cache.readQuery({ query: ALL })
       const index = data.todos.findIndex(todo => todo.id === id)
       data.todos.splice(index, 1)
-      proxy.writeQuery({ query: ALL, data })
+      cache.writeQuery({ query: ALL, data })
     },
   })
 }
