@@ -1,4 +1,4 @@
-import * as api from './api'
+import * as api from './api/apollo'
 
 const $form = document.querySelector('form')
 const $text = document.querySelector('input')
